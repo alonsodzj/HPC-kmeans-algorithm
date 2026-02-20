@@ -8,6 +8,7 @@
 //principal.c
 #include "Circulo.h"
 #include "Punto.h"
+#include <omp.h>
 int main()
 {
 	Punto<3> p{3,4,5}; //lista de inicialización: sólo se puede usar si son justo
