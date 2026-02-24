@@ -1,11 +1,16 @@
+//Punto.h
 #include <vector>
+//la clave es que puedo tener puntos de las dimensiones que quiera.
+//en el caso de que tenga puntos de muchas dimensiones se compilará la platilla específica.
 
-template<int nDimensiones>
+
+template<int nDimensiones> //Esto va a ser una plantilla para puntos con n dimensiones.
 class Punto 
 {
 private:
-    int nCoords = nDimensiones;                 //número de coordenadas que tiene el punto, esto es igual al número de dimensiones.
-    std::vector<float> coords(nDimensiones);    //creo un vector de floats con el numero de dimensiones
+    //mis atributos, numero de coordenadas y un vector de floats con el número de dimensiones para poner los valores en  cada una de estas.
+    int nCoords = nDimensiones; //número de coordenadas que tiene el punto, esto es igual al número de dimensiones.
+    std::vector<float> coords(nDimensiones); //creo un vector de floats con el numero de dimensiones
 public:
     Punto() //entiendo que esto hace el constructor vacío.
     double coords[nCoords]; //array se guarda en la pila

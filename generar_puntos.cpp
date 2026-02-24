@@ -1,5 +1,5 @@
 //esto me crea un conjuto de puntos 2D.
-
+#include "Punto.h"
 #include <vector>
 #include <stdio.h>
 #include <iostream>
