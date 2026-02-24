@@ -8,9 +8,11 @@
 #include <time.h>
 #include <iomanip> // para std::setprecision (usado para imprimir por consola)
 
-#define PI              3.141582f   //constante PI
-#define MAX_RADIUS      20.0f       //radio máximo para la generación de puntos
-#define MAX_DISTANCE    10.0f       //distancia máxima desde el centro para la generación de puntos
+#define PI                  3.141582f   //constante PI
+#define MAX_RADIUS          20.0f       //radio máximo para la generación de puntos
+#define MAX_DISTANCE        10.0f       //distancia máxima desde el centro para la generación de puntos
+#define NCLUSTERS           10           //número de clusters a generar
+#define NPOINTSPERCLUSTER   20          //número de puntos por cluster a generar
 
 struct point2D //el punto tiene dos coordenadas x e y.
 {
@@ -35,22 +37,19 @@ función principal para la generación de puntos 2D, esta clase está limitada p
 tendremos que modificar el código para que se adapte a diferentes puntos, por ejemplo, puntos 3D, 4D, etc. Para esto se van a usar plantillas.
 */
 {
-    srand(time(NULL));              //semilla para la generación de números aleatorios.
-    int nClusters = 1;              //creo una variable con el número de clusters que quiero generar
-    int nPointsPerCluster = 20;     //creo una variable local con el número de puntos que quiero generar por cada cluster.
-
+    srand(time(NULL));              //semilla para la generación de números aleatorios.ss
     std::vector<point2D> data;      //creo un vector de puntos2D para almacenar los puntos generados.
     
-    for (int i = 0; i < nClusters; i++)//por cada número de clusters
+    for (int i = 0; i < NCLUSTERS; i++)//por cada número de clusters
     {
         point2D centroid = getRandomPoint(0.0f, 0.0f, MAX_RADIUS, 0.0);           //genera un centro a partir del cual los puntos se van a generar
-        for (int j = 0; j < nPointsPerCluster; j++)                         //por cada número de puntos por cluster
+        for (int j = 0; j < NPOINTSPERCLUSTER; j++)                         //por cada número de puntos por cluster
         data.push_back(getRandomPoint(centroid.x,centroid.y, MAX_DISTANCE));    //inserto dentro de mi vector de puntos un nuevo punto generado aleatoriamente a partir del centro
     }
 
     FILE* resultsFile;                              //puntero a un archivo para guardar los resultados
     resultsFile = fopen("salida", "wb");            //abro el archivo en modo escritura binaria, si el archivo no existe se crea y si existe se sobrescribe.
-    int nFilas = nClusters * nPointsPerCluster;     //número de filas que tendré que leer, habrá una por cada punto generado.
+    int nFilas = NCLUSTERS * NPOINTSPERCLUSTER;     //número de filas que tendré que leer, habrá una por cada punto generado.
     int nCol = 2;                                   //número de columnas que tendré que leer, habrá una por cada dimensión.
     fwrite(&nFilas, sizeof(int), 1, resultsFile);   //escribo el número de filas en el archivo, esto me ayuda para luego saber cuantas leer
     fwrite(&nCol, sizeof(int), 1, resultsFile);     //escribo el número de columnas en el archivo, esto me ayuda para luego saber cuantas leer
