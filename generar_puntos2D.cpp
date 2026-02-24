@@ -37,13 +37,26 @@ tendremos que modificar el código para que se adapte a diferentes puntos, por e
     int nClusters = 1;              //creo una variable con el número de clusters que quiero generar
     int nPointsPerCluster = 20;     //creo una variable local con el número de puntos que quiero generar por cada cluster.
 
-    std::vector<point2D> data; //creo un vector de puntos2D para almacenar los puntos generados.
+    std::vector<point2D> data;      //creo un vector de puntos2D para almacenar los puntos generados.
+    
+    //voy a dejar comentada esta parte del código porque voy a hacer debug con datos con max 1
+    /*
+        for (int i = 0; i < nClusters; i++)//por cada número de clusters
+        {
+            point2D centroid = getRandomPoint(0.0f, 0.0f, 20.0, 0.0);           //genera un centro a partir del cual los puntos se van a generar
+            for (int j = 0; j < nPointsPerCluster; j++)                         //por cada número de puntos por cluster
+                data.push_back(getRandomPoint(centroid.x,centroid.y, 10.0f));    //inserto dentro de mi vector de puntos un nuevo punto generado aleatoriamente a partir del centro
+        }
+    */
+   
     for (int i = 0; i < nClusters; i++)//por cada número de clusters
     {
-        point2D centroid = getRandomPoint(0.0f, 0.0f, 20.0, 0.0);           //genera un centro a partir del cual los puntos se van a generar
+        point2D centroid = {0.0,0.0};   //voy a hacer que 0 sea mi centroide
         for (int j = 0; j < nPointsPerCluster; j++)                         //por cada número de puntos por cluster
-            data.push_back(getRandomPoint(centroid.x,centroid.y, 10.0f));    //inserto dentro de mi vector de puntos un nuevo punto generado aleatoriamente a partir del centro
+            data.push_back(getRandomPoint(centroid.x,centroid.y, 1.0f));    //inserto dentro de mi vector de puntos un nuevo punto generado aleatoriamente a partir del centro
     }
+
+
     FILE* resultsFile;                              //puntero a un archivo para guardar los resultados
     resultsFile = fopen("salida", "wb");            //abro el archivo en modo escritura binaria, si el archivo no existe se crea y si existe se sobrescribe.
     int nFilas = nClusters * nPointsPerCluster;     //número de filas que tendré que leer, habrá una por cada punto generado.
@@ -53,8 +66,8 @@ tendremos que modificar el código para que se adapte a diferentes puntos, por e
     fwrite(data.data(), sizeof(float), data.size()*nCol, resultsFile);  //escribo los datos de los puntos en el archivo, data.data() me devuelve un puntero al primer elemento del vector, sizeof(float) es el tamaño de cada elemento, data.size()*nCol es el número total de elementos que voy a escribir (número de puntos por número de dimensiones).
     fclose(resultsFile);                            //cierre de archivo, imprescindible para que se guarden los datos correctamente.
 
-    for (int i = 0; i < data.size(); i++)//imprimo por pantalla los puntos generados, esto es solo para debug, tendré que modificarlo.
-    std::cout << std::fixed << std::setprecision(9)
-              << data[i].x << "    "
+    for (int i = 0; i < data.size(); i++)           //imprimo por pantalla los puntos generados, esto es solo para debug, tendré que modificarlo.
+    std::cout << std::fixed << std::setprecision(9) //pongo la precisión a 9 decimales que es lo que me da el formato float.
+              << data[i].x << "\t"
               << data[i].y << "\n";
 }
