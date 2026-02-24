@@ -34,7 +34,7 @@ public:
     }
 
     template<int I = 0>
-    vector operator+=(const vector& v){
+    std::vector operator+=(const std::vector& v){
         v.coords[I]+=coords[I];
         return template operator+=<I+1>(v);
     }
