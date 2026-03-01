@@ -1,6 +1,4 @@
 //función que se va a encargar de leer los datos que he guardado dentro de mi binario con fwrite.
-
-
 #include <vector>
 #include <iostream>
 #include <fstream>
