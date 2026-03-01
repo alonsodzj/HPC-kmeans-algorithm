@@ -70,7 +70,6 @@ Para obtener el máximo rendimiento, se deben distinguir dos niveles de grano:
 - **Cálculo de distancias:** Paralelizar el bucle interno que calcula la distancia de cada punto a los centroides utilizando `#pragma omp parallel for`.
 - **Reducciones:** Utilizar cláusulas `reduction` para calcular mínimos, máximos y sumas locales antes de la comunicación MPI.
 
----
 
 ## 6. Ejemplo de Ejecución (1000 filas, 3 columnas, 4 nodos)
 
