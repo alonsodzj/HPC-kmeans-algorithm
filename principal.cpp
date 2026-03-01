@@ -7,7 +7,7 @@
 
 //principal.c
 #include "Circulo.h"
-#include "Punto.h"
+
 #include <omp.h>
 int main()
 {

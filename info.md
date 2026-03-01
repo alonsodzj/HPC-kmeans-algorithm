@@ -14,11 +14,10 @@ Este documento detalla el desarrollo de una aplicación de alto rendimiento para
 
 El programa debe procesar archivos binarios con la siguiente estructura:
 
-| Tipo de Dato | Descripción | Tamaño |
-| --- | --- | --- |
-| **UINT32** | Número de filas | 4 bytes |
-| **UINT32** | Número de columnas | 4 bytes |
-| **REAL32** | Valores de la matriz (fila por fila) | 4 bytes c/u |
+| Tipo de Dato  | Descripción                          | Tamaño      |
+| **UINT32**    | Número de filas                      | 4 bytes     |
+| **UINT32**    | Número de columnas                   | 4 bytes     |
+| **REAL32**    | Valores de la matriz (fila por fila) | 4 bytes c/u |
 
 > **Nota sobre lectura de archivos:**  
 > Para archivos binarios, se recomienda usar `fread` en C o el método `read()` de `ifstream` en C++, ya que permiten volcar grandes bloques de memoria de forma eficiente, a diferencia de `>>` (operador de extracción) que es para texto.
