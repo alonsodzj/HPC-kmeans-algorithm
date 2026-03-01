@@ -1,5 +1,4 @@
 //generador de fichero de entrada sin la clase punto
-#include "Punto.h"
 #include <vector>
 #include <stdio.h>
 #include <iostream>
@@ -9,20 +8,32 @@
 
 #define PI                  3.141582f   //constante PI
 #define MAX_RADIUS          20.0f       //radio máximo para la generación de puntos
-#define MAX_DISTANCE        10.0f       //distancia máxima desde el centro para la generación de puntos
+#define MAX_DISTANCE        5.0f       //distancia máxima desde el centro para la generación de puntos
 
 
-std::vector<float> getRandomPoint(const std::vector<float>& center, float maxRadius, int numeroCoordenadas)
-//esta clase lo que hace es generar un punto aleatorio dentro de una esfera con un punto centro y un radio máximo.
-{ 
-    std::vector<float> coords(numeroCoordenadas);
-    for(int i = 0; i < numeroCoordenadas; ++i)
+std::vector<float> getRandomPoint(const std::vector<float>& center, float maxRadius, int n)
+{
+    std::vector<float> point(n);
+    
+    float norm = 0.0f;
+    if (norm == 0.0f) norm = 1.0f;
+    // Generar dirección aleatoria
+    for (int i = 0; i < n; ++i)
     {
-        // Cada coordenada está en [center[i]-maxRadius, center[i]+maxRadius]
-        float offset = (static_cast<float>(rand()) / RAND_MAX) * 2.0f * maxRadius - maxRadius;
-        coords[i] = center[i] + offset;
+        point[i] = 2.0f * ((float)rand() / RAND_MAX) - 1.0f;
+        norm += point[i] * point[i];
     }
-    return coords;
+
+    norm = std::sqrt(norm);
+
+    // Generar radio correctamente distribuido
+    float radius = maxRadius * std::pow((float)rand() / RAND_MAX, 1.0f / n);
+
+    // Escalar y trasladar
+    for (int i = 0; i < n; ++i)
+        point[i] = center[i] + (point[i] / norm) * radius;
+
+    return point;
 }
 
 int main()
@@ -48,7 +59,7 @@ tendremos que modificar el código para que se adapte a diferentes puntos, por e
         std::vector<float> point = getRandomPoint(centro, MAX_RADIUS,numeroCoordenadas); //recogo el "punto" en un determinado sitio desde 0 a max radius.
         //genera un centro a partir del cual los puntos se van a generar
         for (int j = 0; j < puntosCluster; j++)                             //por cada número de puntos por cluster
-        data.push_back(getRandomPoint(point, MAX_RADIUS,numeroCoordenadas));    //inserto en el vector un punto aleatorio a partir del centro.
+        data.push_back(getRandomPoint(point, MAX_DISTANCE,numeroCoordenadas));    //inserto en el vector un punto aleatorio a partir del centro.
     }
 
     // --- ESCRITURA EN ARCHIVO CORRECTA PARA VECTORES ---

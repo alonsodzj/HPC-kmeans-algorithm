@@ -44,12 +44,13 @@ std::vector<std::vector<float>> leerDatosBinarios(const char* nombreArchivo)
     return data;
 }
 
-//función que me devuelve el número de coordenadas.
 int getNumCoords(std::vector<std::vector<float>>& datos)
+//función que me devuelve el número de coordenadas.
 {
 return datos[0].size(); //retorno las coordenadas del primer punto ya que todos tienen las mismas dimensiones.
 }
 int getNumPuntos(std::vector<std::vector<float>>& datos)
+//función que me devuelve el número de puntos.
 {
     return datos.size();    //retorno el número de filas del vector, es decir, el número de puntos.
 }
