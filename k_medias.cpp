@@ -13,64 +13,38 @@
 
 //debido a que se usa la distancia euclidia, no es adecuado para formas no esféricas
 
+
+double distancia(std::vector<float>& punto1, std::vector<float>& punto2)
+/*
+función para calcular la distancia entre dos puntos, esto es necesario para
+asignar los puntos a los centroides y para calcular la calidad del resultado.
+*/
+{
+    //esto normalmente se calcula con la raíz cuadrada de la suma de las diferencias al cuadrado, pero para evitar cálculos innecesarios, podemos comparar las distancias al cuadrado directamente.
+    double distTotal = 0.0;
+    for (int i = 0; i < punto1.size(); i++)
+    {
+        //por cada coordenada, calculo la diferencia al cuadrado y la sumo a la distancia total.
+        distTotal += std::pow(punto1[i] - punto2[i], 2);
+    }
+    return distTotal;   //retorno la distancia total al cuadrado. //esto me sirve para comparar las distancias sin necesidad de calcular la raíz cuadrada, lo que mejora el rendimiento.
+}
+
+double distanciaEnUnaDimension(std::vector<float>& punto1, std::vector<float>& punto2, int dimension)
+{
+    //calculo la distancia en una dimensión específica, esto es útil para el cálculo de los centroides.
+    return std::pow(punto1[dimension] - punto2[dimension], 2);   //retorno la distancia al cuadrado en la dimensión especificada.
+}
+
 int main()
 {
-    //aquí se implementa mi algoritmo k medias.
-}
+    //primero leo los datos del archivo binario que me devuelve un vector de vectores con los puntos
+     
+    auto datos = leerDatosBinarios("salida.bin");
+    int numCoords = getNumCoords(datos);    //leo el número de coordenadas
+    int numPuntos = getNumPuntos(datos);    //leo el número de puntos (filas)
+
+    //aquí más tarde podré realizar la distribución de carga.
 
 
-Algoritmo KMeans(datos, K, max_iteraciones):
-
-    // datos: lista de puntos
-    // K: número de clusters
-
-    Inicializar K centroides aleatoriamente
-
-    Para iteracion desde 1 hasta max_iteraciones:
-
-        // Paso 1: Asignación
-        Para cada punto en datos:
-            calcular distancia a cada centroide
-            asignar punto al centroide más cercano
-
-        // Paso 2: Actualización
-        Para cada cluster:
-            recalcular centroide como promedio de sus puntos
-
-        Si los centroides no cambian:
-            romper el ciclo
-
-    retornar centroides y asignaciones
-
-struct Punto {
-    double x, y;
-    int cluster;
-};
-
-double distancia(Punto a, Punto b) {
-    return sqrt((a.x - b.x)*(a.x - b.x) +
-                (a.y - b.y)*(a.y - b.y));
-}
-
-KMeans(vector<Punto>& datos, int K) {
-
-    Inicializar centroides aleatoriamente
-
-    bool cambio = true;
-
-    while (cambio) {
-
-        cambio = false;
-
-        // Asignación
-        for (cada punto p en datos) {
-            encontrar centroide más cercano
-            si cluster cambia:
-                cambio = true
-        }
-
-        // Actualización
-        para cada cluster:
-            calcular nuevo centroide (promedio)
-    }
 }

@@ -50,7 +50,7 @@ El algoritmo se detiene si se cumple cualquiera de estas condiciones:
 
 ## 4. Análisis Estadístico de Datos
 
-Además del clustering, se deben calcular de forma paralela las siguientes métricas para cada columna:
+Además del clustering, se deben calcular de forma paralela las siguientes métricas para cada columna (coordenada):
 
 - **Mínimo/Máximo:** Valor menor y mayor de la columna.
 - **Media:** 
@@ -73,12 +73,17 @@ Para obtener el máximo rendimiento, se deben distinguir dos niveles de grano:
 
 ## 6. Ejemplo de Ejecución (1000 filas, 3 columnas, 4 nodos)
 
-1. **Carga:** Cada nodo recibe 250 filas (0-249 el nodo 0, 250-499 el nodo 1, etc.).
+1. **Carga:**         Cada nodo recibe 250 filas (0-249 el nodo 0, 250-499 el nodo 1, etc.).
 2. **Cálculo Local:** Cada nodo calcula el centroide de sus 250 puntos.
-3. **Broadcast:** Los nodos comparten sus centroides para que todos tengan la lista completa.
-4. **Reasignación:** Cada nodo verifica si sus puntos están más cerca de un centroide ajeno.
-5. **Iteración:** Se repite hasta cumplir el criterio de parada.
+3. **Broadcast:**     Los nodos comparten sus centroides para que todos tengan la lista completa.
+4. **Reasignación:**  Cada nodo verifica si sus puntos están más cerca de un centroide ajeno.
+5. **Iteración:**     Se repite hasta cumplir el criterio de parada.
 
----
 
->tengo que tener una clase punto que no sepa sus dimensiones en tiempo de compilación.
+# Seleccionar y justificar las estrategias de paralelización.(Grano fino y grano grueso)
+- Metodología híbrida entre OPENMP Y MPI
+
+
+# conjunto de centroides -> media de cada coordenada
+# conjutno de grupos de puntos que intercambian puntos entre sus iteraciones.
+
