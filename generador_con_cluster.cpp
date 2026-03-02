@@ -1,44 +1,11 @@
-//generador de fichero de entrada sin la clase punto
-#include <vector>
-#include <stdio.h>
+#include "generador.h"
 #include <iostream>
-#include <cmath>
 #include <time.h>
-#include <random>
 #include <iomanip>                      // para std::setprecision (usado para imprimir por consola)
 
 #define PI                  3.141582f   //constante PI
 #define MAX_RADIUS          20.0f       //radio máximo para la generación de puntos
 #define MAX_DISTANCE        5.0f        //distancia máxima desde el centro para la generación de puntos
-
-
-std::vector<float> getRandomPoint(const std::vector<float>& center, float maxRadius)
-{
-    int n = center.size();
-    std::vector<float> point(n);
-
-    //utilizo distribuciones normales para generar una dirección aleatoria y una distribución uniforme para el radio, esto asegura que los puntos estén distribuidos uniformemente dentro de la esfera.
-    static std::random_device rd;
-    static std::mt19937 gen(rd());
-    std::normal_distribution<float> normal(0.0f, 1.0f);
-    std::uniform_real_distribution<float> uniform(0.0f, 1.0f);
-
-    //Dirección aleatoria usando normales
-    float norm = 0.0f;
-    for (int i = 0; i < n; ++i)
-    {
-        point[i] = normal(gen);
-        norm += point[i] * point[i];
-    }
-    norm = std::sqrt(norm);
-    //Radio correctamente distribuido
-    float radius = maxRadius * std::pow(uniform(gen), 1.0f / n);
-    //Escalar y trasladar
-    for (int i = 0; i < n; ++i)
-        point[i] = center[i] + (point[i] / norm) * radius;
-
-    return point;
-}
 
 int main()
 /*
@@ -63,10 +30,10 @@ tendremos que modificar el código para que se adapte a diferentes puntos, por e
     for (int i = 0; i < numeroClusteres; i++)//por cada número de clusters
     {   
         std::vector<float> centro(numeroCoordenadas, 0.0f); //creo un centro con todas sus coordenadas en 0
-        std::vector<float> point = getRandomPoint(centro, MAX_RADIUS); //recogo el "punto" en un determinado sitio desde 0 a max radius.
+        std::vector<float> point = generador::getRandomPoint(centro, MAX_RADIUS); //recogo el "punto" en un determinado sitio desde 0 a max radius.
         //genera un centro a partir del cual los puntos se van a generar
         for (int j = 0; j < puntosCluster; j++)                             //por cada número de puntos por cluster
-        data.push_back(getRandomPoint(point, MAX_DISTANCE));    //inserto en el vector un punto aleatorio a partir del centro.
+        data.push_back(generador::getRandomPoint(point, MAX_DISTANCE));    //inserto en el vector un punto aleatorio a partir del centro.
     }
 
     //escritura en archivo para vectores.
