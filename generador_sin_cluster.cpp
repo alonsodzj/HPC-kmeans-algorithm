@@ -1,10 +1,9 @@
 //clase que genera puntos aletorios 
-#include "generador.h"
+#include "dependencies/generador.h"
 #include <iostream>
 #include <time.h>
 #include <iomanip>                      // para std::setprecision (usado para imprimir por consola)
 
-#define PI                  3.141582f   //constante PI
 #define MAX_RADIUS          20.0f       //radio máximo para la generación de puntos
 
 int main()

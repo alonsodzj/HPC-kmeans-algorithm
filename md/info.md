@@ -87,3 +87,8 @@ Para obtener el máximo rendimiento, se deben distinguir dos niveles de grano:
 # conjunto de centroides -> media de cada coordenada
 # conjutno de grupos de puntos que intercambian puntos entre sus iteraciones.
 
+/ versión con vector<float>
+/ versión con clase punto
+/ versión con clase matriz
+
+
