@@ -36,7 +36,7 @@ tendremos que modificar el código para que se adapte a diferentes puntos, por e
     }
 
     //escritura en archivo para vectores.
-    FILE* resultsFile = fopen("salida.bin", "wb");
+    FILE* resultsFile = fopen("data/salida.bin", "wb");
 
     //compruebo que se haya abierto correctamente
     if (resultsFile != NULL) {

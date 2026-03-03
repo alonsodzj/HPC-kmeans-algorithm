@@ -7,12 +7,7 @@
 #define MAX_RADIUS          20.0f       //radio máximo para la generación de puntos
 
 int main()
-/*
-función principal para la generación de puntos 2D, esta clase está limitada por lo que cuando terminemos el algorimto
-tendremos que modificar el código para que se adapte a diferentes puntos, por ejemplo, puntos 3D, 4D, etc. Para esto se van a usar plantillas.
-*/
 {
-    //entrada por consola.
     int numeroCoordenadas, numeroClusteres, puntosCluster;
     std::cout << "Introduce el número de coordenadas: ";
     std::cin >> numeroCoordenadas;;
@@ -29,12 +24,12 @@ tendremos que modificar el código para que se adapte a diferentes puntos, por e
     data.push_back(generador::getRandomPoint(centro, MAX_RADIUS));    //inserto en el vector un punto aleatorio a partir del centro.
 
     //escritura en archivo para vectores.
-    FILE* resultsFile = fopen("salida.bin", "wb");
+    FILE* resultsFile = fopen("data/salida.bin", "wb");
 
     //compruebo que se haya abierto correctamente
     if (resultsFile != NULL) {
 
-        int nFilas = puntosCluster;     //el numero de filas es el número de puntos dentro del vector
+        int nFilas = puntosCluster;                     //el numero de filas es el número de puntos dentro del vector
         int nCol = numeroCoordenadas;                   //el número de columnas es una constante pero lo pongo por legibilidad
 
         fwrite(&nFilas, sizeof(int), 1, resultsFile);   //escribo en el archivo el número de filas
@@ -43,18 +38,13 @@ tendremos que modificar el código para que se adapte a diferentes puntos, por e
         //recorremos cada punto
         std::cout << std::fixed << std::setprecision(9);
         for (int i = 0; i < data.size(); i++) {
-            // Escribimos los FLOATS que están DENTRO del vector del punto
-            // data[i].coords.data() nos da el puntero a los números reales
             fwrite(data[i].data(), sizeof(float), nCol, resultsFile);
             for (int j = 0; j < numeroCoordenadas; j++) {
-                // Imprime la coordenada j del punto i
                 std::cout << data[i][j];
-                // Si no es la última columna, ponemos un tabulador
                 if (j < numeroCoordenadas - 1) {
                     std::cout << "\t";
                 }
             }
-            // Al terminar todas las dimensiones del punto, salto de línea
             std::cout << "\n";
         }
         fclose(resultsFile);

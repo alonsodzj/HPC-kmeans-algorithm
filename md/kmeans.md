@@ -1,3 +1,6 @@
+tengo que calcuar esto de cad grupo media, mínimo, máximo y varianza.
+Tengo diferentes clústeres que gestionan 1 o más grupos.
+
 # Guía de Práctica: Algoritmo K-medias y Análisis de Datos
 
 Algoritmo **k-medias**, una técnica de aprendizaje no supervisado diseñada para **agrupar conjuntos de datos en K grupos distintos** basándose en sus características y proximidad geométrica.

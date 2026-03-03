@@ -6,8 +6,7 @@ namespace generador {
     std::vector<float> getRandomPoint(const std::vector<float>& center, float maxRadius)
     {
         int n = center.size();
-        std::vector<float> point(n);    //creo un vector de n coordenadas
-        
+        std::vector<float> point(n);                                            //creo un vector de n coordenadas
         static std::random_device rd;                                           // Semilla
         static std::mt19937 gen(rd());                                          // Generador Mersenne Twister
         std::uniform_real_distribution<float> dist(-maxRadius, maxRadius);
