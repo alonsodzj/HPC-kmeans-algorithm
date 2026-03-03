@@ -1,3 +1,5 @@
+#pragma once
+
 #include "dependencies/generador.h"
 #include <iostream>
 #include <time.h>

@@ -5,6 +5,7 @@
     auto coords = rd.getNumCoords();
     auto puntos = rd.getNumPuntos();
 */
+#pragma once
 
 #include <vector>
 #include <iostream>

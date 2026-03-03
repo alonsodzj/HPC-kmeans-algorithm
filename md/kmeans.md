@@ -1,53 +1,27 @@
-tengo que calcuar esto de cad grupo media, mínimo, máximo y varianza.
+Tengo que calcuar esto de cada grupo media, mínimo, máximo y varianza.
 Tengo diferentes clústeres que gestionan 1 o más grupos.
 
-# Guía de Práctica: Algoritmo K-medias y Análisis de Datos
+*conjunto de centroides* y *conjunto de grupos de puntos* (clusteres) que intercambian puntos entre iteraciones
+puede inciciarse con valor inicial para cualquiera de los dos conjutos.
+En este caso se distribuye equitativamente en orden de los índices;
+    el punto 1 para el grupo 1...
+    el punto 2 para el grupo 2... y asi con todos.
+    En caso de que haya x puntos por grupo, los x primeros al grupo 1, los x segundos al grupo 2...
 
-Algoritmo **k-medias**, una técnica de aprendizaje no supervisado diseñada para **agrupar conjuntos de datos en K grupos distintos** basándose en sus características y proximidad geométrica.
+Cuando ya tengo los grupos procedo a calcular los centroides.
+    El centroide se calcula como el valor medio en cada columna de los datos(puntos).
 
-## 1. Objetivos del Algoritmo
+Los centroides se actualizan una vez se modifican los grupos en cada iteración.
+    **vuelvo a realizar el mismo cálculo para los centroides**
+    los nodos se comunican el cambio de los cengtroides para el siguiente paso
+    
+Cada vez que los centroides se actualizan debe calcluarse para cada punto la distancia al centroide 
+y asignar el punto al grupo que tenga menor distancia al centroide
 
-* Agrupar datos con características similares en clústeres definidos.
-* Minimizar la variancia intra-grupo (distancias cuadradas entre los puntos y su centroide).
-* **Descubrir estructuras ocultas** o patrones no evidentes en grandes volúmenes de datos.
+**los nodos se comunican entre sí para enviarse los puntos que les pertenecen**
 
-## 2. Definiciones Clave
-
-| Término       | Descripción                                           |
-| ---           | ---                                                   |
-| **K**         | Número predefinido de grupos o clústeres a crear.     |
-| **Centroide** | El centro geométrico de un grupo; el "punto promedio".|
-| **Dato**      | Punto individual en un espacio de N dimensiones.      |
-
-> **Nota sobre el centroide:** > Matemáticamente, el centroide se calcula como la media aritmética de todas las dimensiones de los puntos que pertenecen a dicho grupo.
----
-
-## 3. Proceso del Algoritmo K-medias
-
-### A. Inicialización
-El algoritmo comienza seleccionando **K puntos al azar** dentro del espacio de datos para que actúen como los centros de grupo iniciales o centroides.
-
-### B. Proceso Iterativo
-El núcleo del algoritmo se basa en la repetición de dos pasos fundamentales:
-1. **Asignación de Grupos:** Cada dato del conjunto se analiza y se asigna al **centroide más cercano**, formando así los clústeres temporales.
-2. **Recálculo de Centroides:** Una vez asignados todos los puntos, se calcula la nueva posición de cada centroide moviéndolo al **centro promedio** de los puntos que tiene asignados actualmente.
-
-### C. Criterio de Finalización (Estabilización)
-Este proceso de "asignación y movimiento" se repite de forma cíclica hasta que se alcanza la **convergencia**. Esto ocurre cuando:
-* Los centroides ya no cambian de posición.
-* Los puntos ya no cambian de grupo entre iteraciones.
----
-
-## 4. Aplicaciones Principales
-El uso de K-medias es fundamental en diversas áreas científicas y empresariales, destacando principalmente por su capacidad para **descubrir estructuras ocultas** en los datos sin necesidad de etiquetas previas.
----
-
-
-# Problemas
-- Hay que elegir K manualmente.
-- Puede converger a un mínimo local.
-- Sensible a la inicialización.
-- Funciona mejor con clusters esféricos.
-
+# criterio de finalización
+- 2000 iteraciones
+- Que el número total de puntos desplazados sea menor al 5% - o que todos los nodos muevan menos de 5% dentro suya
 
 [text](https://youtu.be/2kfY0R34Dy0)

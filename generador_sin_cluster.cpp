@@ -1,4 +1,6 @@
 //clase que genera puntos aletorios 
+#pragma once
+
 #include "dependencies/generador.h"
 #include <iostream>
 #include <time.h>
