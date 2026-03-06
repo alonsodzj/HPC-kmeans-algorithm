@@ -1,7 +1,7 @@
 //clase que genera puntos aletorios 
 #pragma once
 
-#include "dependencies/generador.h"
+#include "../dependencies/generador.h"
 #include <iostream>
 #include <time.h>
 #include <iomanip>                      // para std::setprecision (usado para imprimir por consola)
@@ -10,7 +10,7 @@
 
 int main()
 {
-    int numeroCoordenadas, numeroClusteres, puntosCluster;
+    int numeroCoordenadas, puntosCluster;
     std::cout << "Introduce el número de coordenadas: ";
     std::cin >> numeroCoordenadas;;
     std::cout << "Introduce el número de puntos: ";
@@ -41,15 +41,9 @@ int main()
         std::cout << std::fixed << std::setprecision(9);
         for (int i = 0; i < data.size(); i++) {
             fwrite(data[i].data(), sizeof(float), nCol, resultsFile);
-            for (int j = 0; j < numeroCoordenadas; j++) {
-                std::cout << data[i][j];
-                if (j < numeroCoordenadas - 1) {
-                    std::cout << "\t";
-                }
-            }
-            std::cout << "\n";
         }
         fclose(resultsFile);
         std::cout << "Archivo guardado correctamente." << std::endl;    //esto es para depurar
+        
     }
 }

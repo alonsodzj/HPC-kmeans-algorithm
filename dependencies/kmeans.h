@@ -4,8 +4,8 @@
 #include <iostream>
 #include <cmath>
 #include <omp.h>
-
-
+#include <time.h>
+#include <iomanip>
 //--STRUCT PARA ENCAPSULAR--
 struct Dataset {
     std::vector<float> data;
@@ -59,7 +59,7 @@ void actualizarCentroides(const Dataset& dataset, std::vector<float>& centroides
 float actualizarGrupos(const Dataset& dataset, std::vector<float>& centroides, std::vector<int>& asignaciones)
 {
     int numCentroides = centroides.size()/dataset.numCoords;
-    float porcentajeDesplazados = 0.0f;
+    int puntosDesplazados = 0;
     //recorremos cada punto del dataset
     for (int i = 0; i < dataset.numPuntos; i++)
     {
@@ -84,28 +84,44 @@ float actualizarGrupos(const Dataset& dataset, std::vector<float>& centroides, s
                 mejorCentroide = j; //d
             }
         }
-        asignaciones[i]=mejorCentroide; //actualizo asignaciones.
+        if (asignaciones[i] != mejorCentroide)
+        {
+            puntosDesplazados++;
+            asignaciones[i] = mejorCentroide;
+        }
     }
-    return porcentajeDesplazados;
+    return float(puntosDesplazados)/dataset.numPuntos;
 }
 
 //--FUNCIÓN KMEANS SECUENCIAL--
 void kmeans(const Dataset& dataset, std::vector<float>& centroides, std::vector<int>&asignaciones)
 {
-    //asigno los puntos a un determinado grupo antes de calcular los cenotroides
-    for(int i = 0; i<asignaciones.size(); i++){
-        asignaciones[i] = i % (centroides.size()/dataset.numCoords);
+    clock_t time0 = clock();
+
+    //asigno los puntos a un determinado grupo antes de calcular los centroides
+    for(int i = 0; i < asignaciones.size(); i++){
+        asignaciones[i] = i % (centroides.size() / dataset.numCoords);
     }
-    bool calidad = false;   //si mis puntos se desplazan menos del 5% entonces calidad ==true y mi algoritmo termina.
-    int iteraciones = 0;    //si supero las 2000 iteraciones mi algoritmo termina.
-    
-    while (iteraciones<2000 && !calidad)
+
+    bool calidad = false;   
+    int iteraciones = 0;
+
+    while (iteraciones < 2000 && !calidad)
     {
-        actualizarCentroides(dataset,centroides,asignaciones);
-        if (actualizarGrupos(dataset,centroides,asignaciones)   <=  0.05f)
+        actualizarCentroides(dataset, centroides, asignaciones);
+
+        if (actualizarGrupos(dataset, centroides, asignaciones) <= 0.0001f)
         {
-            /* code */
+            calidad = true;
         }
-        
+        iteraciones++;
     }
+
+    clock_t time1 = clock();
+
+    double tiempo = double(time1 - time0) / CLOCKS_PER_SEC;
+
+    std::cout << std::fixed << std::setprecision(6); // 6 decimales fijos
+    std::cout << "Algoritmo finalizado en tiempo de ejecución: "
+              << tiempo << " segundos\n";
 }

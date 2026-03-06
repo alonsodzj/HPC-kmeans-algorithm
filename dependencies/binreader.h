@@ -22,7 +22,6 @@ public:
     int getNumPuntos();
 };
 
-
 std::vector<float> reader::leerDatos(const char* nombreArchivo)
 {
     //creo mi vector unidimiensional para optimizar rendimiento
