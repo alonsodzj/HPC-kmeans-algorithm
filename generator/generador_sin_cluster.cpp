@@ -23,7 +23,7 @@ int main()
     //bucle para la generación de puntos a partir de los datos introducidos.
     std::vector<float> centro(numeroCoordenadas, 0.0f); //creo un centro con todas sus coordenadas en 0
     for (int j = 0; j < puntosCluster; j++)                             //por cada número de puntos por cluster
-    data.push_back(generador::getRandomPoint(centro, MAX_RADIUS));    //inserto en el vector un punto aleatorio a partir del centro.
+    data.push_back(getRandomPoint(centro, MAX_RADIUS));    //inserto en el vector un punto aleatorio a partir del centro.
 
     //escritura en archivo para vectores.
     FILE* resultsFile = fopen("data/salida.bin", "wb");

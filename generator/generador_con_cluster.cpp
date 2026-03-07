@@ -31,10 +31,10 @@ tendremos que modificar el código para que se adapte a diferentes puntos, por e
     for (int i = 0; i < numeroClusteres; i++)//por cada número de clusters
     {   
         std::vector<float> centro(numeroCoordenadas, 0.0f); //creo un centro con todas sus coordenadas en 0
-        std::vector<float> point = generador::getRandomPoint(centro, MAX_RADIUS); //recogo el "punto" en un determinado sitio desde 0 a max radius.
+        std::vector<float> point = getRandomPoint(centro, MAX_RADIUS); //recogo el "punto" en un determinado sitio desde 0 a max radius.
         //genera un centro a partir del cual los puntos se van a generar
         for (int j = 0; j < puntosCluster; j++)                             //por cada número de puntos por cluster
-        data.push_back(generador::getRandomPoint(point, MAX_DISTANCE));    //inserto en el vector un punto aleatorio a partir del centro.
+        data.push_back(getRandomPoint(point, MAX_DISTANCE));    //inserto en el vector un punto aleatorio a partir del centro.
     }
 
     //escritura en archivo para vectores.
