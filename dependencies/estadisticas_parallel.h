@@ -25,7 +25,7 @@ struct Stats{
     float media     = 0;
     float varianza  = 0;
     int contador    = 0;
-};
+}__attribute__((packed));
 
 //esta función simplemente llama a la función calcularEstadísticas por cada columna de cada grupo.
 
@@ -34,12 +34,13 @@ void calcularEstadisticas(const Dataset& data,const std::vector<int>& asignacion
 {
     double t0 = omp_get_wtime();
 
-    //ESTO NO SE MODIFICA POR LO TANTO NO TENEMOS CONDICIONES DE CARRERA
+    //ESTO NO SE MODIFICA POR LO QUE PUEDE SER COMPARTIDO
     int const numPuntos = data.numPuntos;
     int const numCoords = data.numCoords;
 
     std::vector<Stats> stats_total(NUM_CENTROIDES * numCoords); //tengo un struct global
 
+    //PUEDO REORDENAR LOOPS PARA MEJORAR LA CACHÉ, EN LUGAR DE EMPEZAR POR PUNTOS, HAGO EL FOR DE CENTROIDES, LUEGO PUNTPOS
     #pragma omp parallel
     {
         std::vector<Stats> stats_local(NUM_CENTROIDES * numCoords); //tengo un struct por cada hilo
@@ -66,37 +67,35 @@ void calcularEstadisticas(const Dataset& data,const std::vector<int>& asignacion
                 stats.varianza += delta * delta2;     //actualización de la varianza comparando el valor de esta antes y después de actualizar la media.
             }
         }
-        //reduzco la sección crítica solo a la redución
+        //reduzco la sección crítica solo a la redución, voy a intentar hacerla paralela
         #pragma omp critical
         {
+            //esto podíra paralelziarlo también ya que si mi número de centroides es muy grande hay muchas iteracioes.
             for (int k = 0; k < NUM_CENTROIDES * numCoords; k++)
             {
-                Stats& global = stats_total[k];
+                Stats& total = stats_total[k];
                 Stats& local  = stats_local[k];
-
                 if (local.contador == 0) continue;  //si el struct no tiene datos salto a la siguiente iteración.
-
                 // min / max
-                if (local.min < global.min) global.min = local.min;
-                if (local.max > global.max) global.max = local.max;
-
+                if (local.min < total.min) total.min = local.min;
+                if (local.max > total.max) total.max = local.max;
                 // combinar Welford
-                int nA = global.contador;
+                int nA = total.contador;
                 int nB = local.contador;
-
                 int n = nA + nB;
-
-                float delta = local.media - global.media;
+                float delta = local.media - total.media;
 
                 if (n > 0)
                 {
-                    global.media += delta * nB / n;
-                    global.varianza += local.varianza + delta * delta * nA * nB / n;
-                    global.contador = n;
+                    total.media += delta * nB / n;
+                    total.varianza += local.varianza + delta * delta * nA * nB / n;
+                    total.contador = n;
                 }
             }
         }
-        #pragma omp for
+
+        //Puedo paralelizar el de fuera o el de dentro no se cual es mejor por eso hago collapse para paralelizar los dos como uno.
+        #pragma omp for collapse(n)
         for (int i = 0; i < NUM_CENTROIDES; i++)    //cada hilo hace un centroide
         {
             for (int j = 0; j < numCoords; j++)     //por cada coordenada del centroide
@@ -107,7 +106,7 @@ void calcularEstadisticas(const Dataset& data,const std::vector<int>& asignacion
                 else stats.varianza = 0.0f;
             }
         }
-        //esto puedo omitirlo
+        //esto solo lo ejecuta un hilo
         #pragma omp single
         {
             /*

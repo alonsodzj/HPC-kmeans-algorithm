@@ -12,6 +12,11 @@
 #include <fstream>
 #include <iomanip>
 
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+
 class reader{
 private:
     int nFilas = 0;
@@ -22,6 +27,43 @@ public:
     int getNumPuntos();
 };
 
+//versión con mmaping para acelerar la subida de archivos que pesan mucho.
+std::vector<float> reader::leerDatos(const char* nombreArchivo)
+{
+    int fd = open(nombreArchivo, O_RDONLY);
+    if (fd == -1) {
+        std::cerr << "Error abriendo archivo\n";
+        return {};
+    }
+
+    posix_fadvise(fd, 0, 0, POSIX_FADV_SEQUENTIAL);
+
+    struct stat sb;
+    fstat(fd, &sb);
+
+    void* mapped = mmap(NULL, sb.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+    if (mapped == MAP_FAILED) {
+        std::cerr << "Error en mmap\n";
+        close(fd);
+        return {};
+    }
+
+    char* ptr = (char*)mapped;
+
+    nFilas = *(int*)ptr;
+    nColumnas = *(int*)(ptr + sizeof(int));
+
+    float* datos = (float*)(ptr + 2*sizeof(int));
+
+    std::vector<float> data(datos, datos + nFilas*nColumnas);
+
+    munmap(mapped, sb.st_size);
+    close(fd);
+
+    return data;
+}
+
+/*
 std::vector<float> reader::leerDatos(const char* nombreArchivo)
 {
     //creo mi vector unidimiensional para optimizar rendimiento
@@ -53,6 +95,7 @@ std::vector<float> reader::leerDatos(const char* nombreArchivo)
     }
     return data;
 }
+*/
 
 int reader::getNumCoords()
 {

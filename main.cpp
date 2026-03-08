@@ -5,6 +5,9 @@
 #include "dependencies/guardar.h"
 
 int main(){
+    //esto hace que mi lectura con binreader sea más rapida.
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
     //primero leo los datos del archivo binario que me devuelve un vector de vectores con los puntos
     const char* archivo = "data/salida.bin";
     reader rd;
