@@ -14,7 +14,7 @@ void actualizarCentroides(const Dataset& dataset, std::vector<float>& centroides
 {
     int numCentroides = centroides.size()/dataset.numCoords;
 
-    std::vector<float> suma(centroides.size(), 0.0f); //vector de tamaño centroides para almacenar las sumas
+    std::vector<float> suma(centroides.size(), 0.0f);   //vector de tamaño centroides para almacenar las sumas
     std::vector<int> conteo(numCentroides,0);           //vector de conteo inicializado a 0
 
     for (int i = 0; i < asignaciones.size(); i++)
