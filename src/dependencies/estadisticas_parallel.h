@@ -1,16 +1,18 @@
-//--MISMO ARCHIVO PERO CON LAS FUNCIONES PARALELAS--
-
 #pragma once
 
-#include "dataset.h"
+#include "constantes.h"
 #include <vector>
 #include <iostream>
 #include <iomanip>
 #include <limits>
 #include <omp.h>
+/*
+sería interesante tener una versión que me calcule las estadísticas sin tener que ir comprobando si pertenece a un grupo u a otro para realizar
+todas las estadísticas de una sola pasada, una por cada grupo y ya
 
-#define NUM_CENTROIDES 5
-#define NUM_STATS 4
+*/
+
+
 
 //--ESTADÍSTICAS DE UNA COLUMNA--
 /*
@@ -30,10 +32,8 @@ struct Stats{
 //esta función simplemente llama a la función calcularEstadísticas por cada columna de cada grupo.
 
 //calcula todas las estadísticas en una llamada, además está paralelizda.
-void calcularEstadisticas(const Dataset& data,const std::vector<int>& asignaciones) //retorno un vector con las estadísticas (ocupa relativamente poco)
+void calcularEstadisticas(const Dataset& data, const std::vector<int>& asignaciones) //retorno un vector con las estadísticas (ocupa relativamente poco)
 {
-    double t0 = omp_get_wtime();
-
     //ESTO NO SE MODIFICA POR LO QUE PUEDE SER COMPARTIDO
     int const numPuntos = data.numPuntos;
     int const numCoords = data.numCoords;
@@ -95,7 +95,7 @@ void calcularEstadisticas(const Dataset& data,const std::vector<int>& asignacion
         }
 
         //Puedo paralelizar el de fuera o el de dentro no se cual es mejor por eso hago collapse para paralelizar los dos como uno.
-        #pragma omp for collapse(n)
+        #pragma omp for collapse(2)
         for (int i = 0; i < NUM_CENTROIDES; i++)    //cada hilo hace un centroide
         {
             for (int j = 0; j < numCoords; j++)     //por cada coordenada del centroide
@@ -107,9 +107,10 @@ void calcularEstadisticas(const Dataset& data,const std::vector<int>& asignacion
             }
         }
         //esto solo lo ejecuta un hilo
+        /*
         #pragma omp single
         {
-            /*
+
                 for (int i = 0; i < NUM_CENTROIDES; i++)
                 {
                     //imprimo todas las estadísticas
@@ -123,11 +124,7 @@ void calcularEstadisticas(const Dataset& data,const std::vector<int>& asignacion
                                 << " | Var:   " << stats.varianza << "\n";
                     }
                 }
-            */
-            double t1 = omp_get_wtime();
-            double tiempo = t1 - t0;
-            std::cout << std::fixed << std::setprecision(6); // 6 decimales fijos
-            std::cout << "Estadísticas paralelas calculadas en: " << tiempo << " segundos\n";
         }
+        */
     }
 }

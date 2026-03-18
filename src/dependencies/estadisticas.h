@@ -1,13 +1,10 @@
 #pragma once
 
-#include "dataset.h"
+#include "constantes.h"
 #include <vector>
 #include <iostream>
 #include <iomanip>
 #include <limits>
-
-#define NUM_CENTROIDES 5
-#define NUM_STATS 4
 
 //--ESTADÍSTICAS DE UNA COLUMNA--
 /*

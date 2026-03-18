@@ -92,3 +92,18 @@ Para obtener el máximo rendimiento, se deben distinguir dos niveles de grano:
 / versión con clase matriz
 
 
+Compilación 
+
+g++ -O3 -march=native practica.cpp -o programa
+
+versión de compilado con todas las ooptimizaciones posibles.
+mpicxx -O3 -march=native -fopenmp practica.cpp -o programa_hibrido
+
+
+El nodo 0 lee y reparte la informacion con scatter
+
+MPI_Bcast al inicio de cada iteración ya que todos los nodos necesitan conocer la posición de todos los centroides
+
+Cada proceso calcula la suma local de las coordenadas de sus puntos asignados. Luego usamos MPI_Allreduce para sumar esas contribuciones y obtener los nuevos centroides globales.
+
+El número de puntos que se cambiaron de grupo debe sumarse entre todos los grupos para ver si todos paran

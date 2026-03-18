@@ -1,0 +1,2 @@
+#define NUM_CENTROIDES 5
+#define NUM_STATS 4
