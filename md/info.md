@@ -97,7 +97,8 @@ Compilación
 g++ -O3 -march=native practica.cpp -o programa
 
 versión de compilado con todas las ooptimizaciones posibles.
-mpicxx -O3 -march=native -fopenmp practica.cpp -o programa_hibrido
+
+mpicxx -O3 -march=native -fopenmp -fopenmp-simd kmeans.cpp
 
 
 El nodo 0 lee y reparte la informacion con scatter

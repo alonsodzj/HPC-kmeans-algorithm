@@ -25,3 +25,13 @@ y asignar el punto al grupo que tenga menor distancia al centroide
 - Que el número total de puntos desplazados sea menor al 5% - o que todos los nodos muevan menos de 5% dentro suya
 
 [text](https://youtu.be/2kfY0R34Dy0)
+
+
+## Una vez paralelizado:
+🚀 Optimizaciones avanzadas a considerar
+1. Lloyd's acceleración (Triangle Inequality)
+En lugar de calcular distancia a todos los centroides, usa la desigualdad triangular para podar cálculos.
+2. Mini-batch K-Means
+En cada iteración, procesa solo una muestra aleatoria de puntos. Converge más rápido.
+3. Computación asíncrona
+Solapar comunicación MPI con cómputo usando MPI_Isend/Irecv + MPI_Wait.
