@@ -9,6 +9,24 @@
 #include <cmath>
 #include <algorithm>
 
+/*
+cuando ya he terminado de ejecutar mi algoritmo kmedias, lo que hago es que cada nodo calcula las estadísticas de sus puntos
+en base a los grupos resultantes.
+El nodo 0 calcula las estadísticas para grupo en base a cada uno de los puntos que tiene asignado,
+el 1 hace lo mismo, el 2 igual....
+
+El resultado global y las esatdísticas correctas serán la combinación de estos cálculos locales en cada nodo
+
+*/
+
+struct Estadisticas{
+    float min       = std::numeric_limits<float>::max();        //para no inicializar 0
+    float max       = std::numeric_limits<float>::lowest();     //para no inicializar a 0
+    float media     = 0;
+    float varianza  = 0;
+    int contador    = 0;
+}__attribute__((packed));
+
 /**
  * @brief Calcula min, max, media y varianza en UNA SOLA PASADA
  * 
@@ -26,16 +44,13 @@ void calcularEstadisticasMPI(
     const std::vector<int>& asignaciones_local, //el vector de asignaciones
     int num_clusters)                       //el número de clústeres
 {
-    int rank, size;
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    int id, size;
+    MPI_Comm_rank(MPI_COMM_WORLD, &id);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
-    
-    // ═══════════════════════════════════════════════════════════════════════
-    // FASE 1: CÓMPUTO LOCAL - UNA SOLA PASADA
-    // ═══════════════════════════════════════════════════════════════════════
-    
+
     size_t total_dims = num_clusters * n_columnas;
     
+    //puedo tener un struct para esto pero dudo que lo haga más rapido
     std::vector<float> min_local(total_dims, std::numeric_limits<float>::max());
     std::vector<float> max_local(total_dims, std::numeric_limits<float>::lowest());
     std::vector<double> suma_cuadrados_local(total_dims, 0.0);
@@ -44,12 +59,13 @@ void calcularEstadisticasMPI(
     // Paralelización OpenMP con copias privadas
     #pragma omp parallel
     {
+        //creo una copia local de cada una de las estructuras
         std::vector<float> min_private(total_dims, std::numeric_limits<float>::max());
         std::vector<float> max_private(total_dims, std::numeric_limits<float>::lowest());
         std::vector<double> suma2_private(total_dims, 0.0);
         std::vector<int> conteo_private(num_clusters, 0);
         
-        #pragma omp for nowait schedule(static)
+        #pragma omp for nowait schedule(static) //static es caché friendly
         for (size_t i = 0; i < n_filas_local; ++i) {
             int cluster = asignaciones_local[i];
             const float* punto = &datos_local[i * n_columnas];
@@ -68,7 +84,9 @@ void calcularEstadisticasMPI(
             }
         }
         
-        // Combinar resultados de threads
+
+        //aquí hay un cuello de botella que flipas loco
+        //combinar los resultados, crítical no es óptimo tengo que buscar la manera de paralelizarlo
         #pragma omp critical
         {
             for (int c = 0; c < num_clusters; ++c) {

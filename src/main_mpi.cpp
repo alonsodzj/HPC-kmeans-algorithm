@@ -23,9 +23,12 @@ int main(int argc, char** argv) {
 
     std::cout << std::fixed << std::setprecision(9);    //Esto es para la precisión
 
+    //creo el vector de datos para la lectura y las variables para las filas y las columnas.
     std::vector<float> datos;
-    size_t n_filas = 0, n_columnas = 0;
+    size_t n_filas = 0;
+    size_t n_columnas = 0;
     
+    //si soy el nodo cero entonces leo
     if (id == 0) {
         const char* nombre_archivo = "../data/salida.bin";
         std::cout << "Nodo " << id << " leyendo archivos...\n";
@@ -40,17 +43,15 @@ int main(int argc, char** argv) {
         
         std::cout << "Número de puntos: " << n_filas << "\n";
         std::cout << "Número de coordenadas: " << n_columnas << "\n";
-        std::cout << "Número de procesos MPI: " << size << "\n";
+        std::cout << "Número de procesos MPI: " << size << "\n";    //imprimo el tamaño del comunicador
     }
     
-    //una vez he leído los datos mando el número de filas y el número de columnas a cada nodo
+    //una vez he leído los datos mando el número de filas y el número de columnas a cada nodo mediante un broadcast
     MPI_Bcast(&n_filas, 1, MPI_UNSIGNED_LONG_LONG, 0, MPI_COMM_WORLD);
     MPI_Bcast(&n_columnas, 1, MPI_UNSIGNED_LONG_LONG, 0, MPI_COMM_WORLD);
     
-    // ═══════════════════════════════════════════════════════════════════════
     // DISTRIBUCIÓN DE DATOS CON SCATTERV (maneja tamaños desiguales)
-    // ═══════════════════════════════════════════════════════════════════════
-    
+
     // Calcular cuántos puntos le corresponden a cada proceso
     size_t puntos_por_proceso = n_filas / size;
     size_t puntos_restantes = n_filas % size;
@@ -61,27 +62,48 @@ int main(int argc, char** argv) {
         n_filas_local++;  // Los primeros 'puntos_restantes' procesos reciben 1 extra
     }
     
-    // Preparar buffers para Scatterv
-    std::vector<int> sendcounts(size);
-    std::vector<int> displs(size);
+    // Preparar buffers para Scatterv (hago siempre los buffers con std::vector)
+    std::vector<int> sendcounts(size);  //cuantos elementos enviar a cada proceso 
+    std::vector<int> displs(size);      //dónde empieza cada porción en el buffer original
     
+    //solo lo calcula el nodo cero, los demás procesos solo tienen que recibir
     if (id == 0) {
-        size_t offset = 0;
-        for (int r = 0; r < size; ++r) {
+        size_t offset = 0;  //índice de inicio del dataset para cada proceso
+        for (int r = 0; r < size; ++r) 
+        //para cada proceso
+        {
             size_t n_local = puntos_por_proceso;
-            if (r < static_cast<int>(puntos_restantes)) {
+            if (r < static_cast<int>(puntos_restantes)) 
+            //si el índice de mi nodo es menor a puntos restantes se le asigna uno extra
+            {
                 n_local++;
             }
-            sendcounts[r] = n_local * n_columnas;
-            displs[r] = offset * n_columnas;
-            offset += n_local;
+            sendcounts[r] = n_local * n_columnas;   //se asigna para cada índice de nodo el tamaño de puntos a /enviar/recibir
+            displs[r] = offset * n_columnas;    //índice de donde empieza cada proceso en el vector plano
+            offset += n_local;  //se actualiza el offset para la siguiente iteración.
         }
     }
     
-    // Reservar espacio local
+    //creo el vector de centroides que va a ser el mismo para todos los nodos
+    std::vector<float> centroides(NUM_CENTROIDES * n_columnas);
+    //reserva del buffer de recepcion para el scatter
     std::vector<float> datos_local(n_filas_local * n_columnas);
     
-    // Distribuir datos desde rank 0 a todos
+    if(id==0)
+    {
+        //selecciono de centroides puntso estratégicas de mi vector de datos
+        size_t paso = n_filas / NUM_CENTROIDES;
+
+        for (int i = 0; i < NUM_CENTROIDES; ++i) {
+            size_t fila = i * paso;
+
+            for (size_t j = 0; j < n_columnas; ++j) {
+                centroides[i * n_columnas + j] = datos[fila * n_columnas + j];
+            }
+        }
+    }
+    
+    // Distribuir datos desde el nodo 0 a todos
     MPI_Scatterv(
         datos.data(),           // Buffer de envío (solo el nodo 0 lo usa)
         sendcounts.data(),      // Cuántos elementos enviar a cada proceso
@@ -93,35 +115,18 @@ int main(int argc, char** argv) {
         0,                      // Root (quien envía)
         MPI_COMM_WORLD
     );
-    
+    // Broadcast de centroides iniciales
+    MPI_Bcast(centroides.data(), NUM_CENTROIDES * n_columnas, MPI_FLOAT, 0, MPI_COMM_WORLD);
+   
+
     // Liberar memoria en el nodo 0 (ya no necesita el dataset completo)
-    if (id == 0) {
+    //me cargo la información del buffer original porque ya tengo el dataset con la cantidad de datos deseada
+    if (id == 0) 
+    {
         datos.clear();
         datos.shrink_to_fit();
     }
-    
-    //inicializo los centroides
-    std::vector<float> centroides(NUM_CENTROIDES * n_columnas);
-    if (id == 0) {
-        centroides.resize(NUM_CENTROIDES * n_columnas);
-        
-        // Inicialización: seleccionar primeros NUM_CENTROIDES puntos
-        // (Alternativamente: k-means++, random, etc.)
-        for (int i = 0; i < NUM_CENTROIDES && i < static_cast<int>(n_filas_local); ++i) {
-            for (size_t j = 0; j < n_columnas; ++j) {
-                centroides[i * n_columnas + j] = datos_local[i * n_columnas + j];
-            }
-        }
-    }
-    
-    // Broadcast de centroides iniciales
-    MPI_Bcast(centroides.data(), NUM_CENTROIDES * n_columnas, MPI_FLOAT, 0, MPI_COMM_WORLD);
-    
-    // Vector de asignaciones local
-    std::vector<int> asignaciones_local;
-    
-    //ejecución del algoritmo kmeans
-
+     
     //espero a que lleguen todos los nodos aquí para medir cuanto tarda en ejecutarse el algoritmo.
     MPI_Barrier(MPI_COMM_WORLD);
 
@@ -130,6 +135,7 @@ int main(int argc, char** argv) {
     }
     double kmeans_start = MPI_Wtime();
 
+    //esto es para cuestiones de depuración.
     if (id == 0) {
         #pragma omp parallel
         {
@@ -140,6 +146,8 @@ int main(int argc, char** argv) {
         }
     }
 
+    //creo el vector de asignaciones local
+    std::vector<int> asignaciones_local();
     //hago la llamada a mi algoritmo paralelo con el dataset local, las asignaciones locales y el resto de argumentos
     kmeans_mpi(
         datos_local, 
