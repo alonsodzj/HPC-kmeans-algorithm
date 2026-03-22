@@ -2,11 +2,10 @@
 #pragma once
 
 #include "../dependencies/generador.h"
+#include "../dependencies/constantes.h"
 #include <iostream>
 #include <time.h>
 #include <iomanip>                      // para std::setprecision (usado para imprimir por consola)
-
-#define MAX_RADIUS          1000000.0f       //radio máximo para la generación de puntos
 
 int main()
 {
@@ -26,7 +25,7 @@ int main()
     data.push_back(getRandomPoint(centro, MAX_RADIUS));    //inserto en el vector un punto aleatorio a partir del centro.
 
     //escritura en archivo para vectores.
-    FILE* resultsFile = fopen("data/salida.bin", "wb");
+    FILE* resultsFile = fopen("../../data/salida.bin", "wb");
 
     //compruebo que se haya abierto correctamente
     if (resultsFile != NULL) {

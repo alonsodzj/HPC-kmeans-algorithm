@@ -6,6 +6,9 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+
+//este es un tipo de lectura AoS en el que voy almacenando los puntos en orden no toda una coordenada y luego la siguiente
+
 //versión con mmaping para acelerar la lectura
 void leerDatos(const char* nombre_archivo, std::vector<float>& vector_datos, size_t& n_filas, size_t& n_columnas)
 {

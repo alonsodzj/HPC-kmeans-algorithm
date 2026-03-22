@@ -28,11 +28,7 @@ void calcularEstadisticasMPI(
     std::vector<float> max_local(total_dims, std::numeric_limits<float>::lowest());
     std::vector<double> suma_cuadrados_local(total_dims, 0.0);
     std::vector<int> conteo_local(num_clusters, 0);
-    
-    // ═══════════════════════════════════════════════════════════════════
-    // CÁLCULO LOCAL PARALELO (SIN CRITICAL NI ATOMICS - USANDO REDUCTION)
-    // ═══════════════════════════════════════════════════════════════════
-    
+
     //uso la concatenación de reduciones para poder ejecutar mi algoritmo de una forma muy eficiente.
     #pragma omp parallel for \
         reduction(+:conteo_local[:num_clusters], suma_cuadrados_local[:total_dims]) \

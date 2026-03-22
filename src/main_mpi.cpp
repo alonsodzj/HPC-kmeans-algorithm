@@ -1,7 +1,8 @@
 //dependencias locales
 #include "dependencies/constantes.h"
 #include "dependencies/lectura.h"  
-#include "dependencies/kmeans_mpi.h"
+#include "dependencies/kmeans_improved.h"
+//#include "dependencies/kmeans_mpi.h"
 #include "dependencies/estadisticas_mpi.h"
 
 
@@ -147,7 +148,7 @@ int main(int argc, char** argv) {
     }
 
     //creo el vector de asignaciones local
-    std::vector<int> asignaciones_local();
+    std::vector<int> asignaciones_local;
     //hago la llamada a mi algoritmo paralelo con el dataset local, las asignaciones locales y el resto de argumentos
     kmeans_mpi(
         datos_local, 

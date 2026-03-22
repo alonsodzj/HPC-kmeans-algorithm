@@ -125,10 +125,10 @@ void calcularEstadisticasMPI(
                MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
     
     // ═══════════════════════════════════════════════════════════════════════
-    // FASE 3: CÁLCULO Y DISPLAY (solo rank 0)
+    // FASE 3: CÁLCULO Y DISPLAY (solo id 0)
     // ═══════════════════════════════════════════════════════════════════════
     
-    if (rank == 0) {
+    if (id == 0) {
         /*
         std::cout << "\n";
         std::cout << "═══════════════════════════════════════════════════════════════\n";
