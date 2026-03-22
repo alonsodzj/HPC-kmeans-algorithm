@@ -1,3 +1,7 @@
+COMPILACIÓN
+mpicxx -O3 -march=znver2 -mtune=znver2        -fopenmp -fopenmp-simd        -ffast-math        -funroll-loops        -std=c++11        main_mpi.cpp        -o kmeans_mpi
+
+
 
 EJECUCIÓN
 # Opción A: 2 procesos MPI, 6 threads cada uno

@@ -1,9 +1,10 @@
 //dependencias locales
 #include "dependencies/constantes.h"
 #include "dependencies/lectura.h"  
-#include "dependencies/kmeans_improved.h"
+#include "dependencies/kmeans_packed.h"
 //#include "dependencies/kmeans_mpi.h"
-#include "dependencies/estadisticas_mpi.h"
+//#include "dependencies/estadisticas_mpi"
+#include "dependencies/estadisticas.h"
 
 
 //dependencias paralelas
